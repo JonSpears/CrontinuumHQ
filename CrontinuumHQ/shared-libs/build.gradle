@@ -1,0 +1,49 @@
+plugins {
+    id 'java-library'
+    id 'io.spring.dependency-management' version '1.1.7' // For version management
+}
+
+group = 'com.jonspears'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/release' } // Primary Spring repo
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:3.5.0' // Inherit versions from Spring Boot
+    }
+}
+
+dependencies {
+    // Spring Framework
+    implementation 'org.springframework:spring-core'
+    implementation 'org.springframework:spring-context'
+    implementation 'org.springframework.data:spring-data-commons'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Hibernate
+    implementation 'org.hibernate:hibernate-core:6.4.0.Final'
+
+    // Database
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testImplementation 'org.springframework:spring-test'
+
+}
