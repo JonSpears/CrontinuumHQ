@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.8
+    platform: linux/arm64
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: bitnami/kafka:3.4
+    platform: linux/arm64
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    ports:
+      - "9092:9092"
+
+  redis:
+    image: redis/redis-stack:latest
+    platform: linux/arm64
+    ports:
+      - "6379:6379"
