@@ -25,6 +25,16 @@ dependencyManagement {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'org.junit.platform:junit-platform-engine:1.9.3'
+        force 'org.junit.platform:junit-platform-commons:1.9.3'
+        force 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+        force 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+        force 'org.junit.jupiter:junit-jupiter-params:5.9.3'
+    }
+}
+
 dependencies {
     // Spring Framework
     implementation 'org.springframework:spring-core'
@@ -46,4 +56,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
     testImplementation 'org.springframework:spring-test'
 
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters"
 }

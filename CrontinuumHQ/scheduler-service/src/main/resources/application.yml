@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scheduler
+    username: admin
+    password: ${DB_PASSWORD}
+    hikari:
+      schema: public # Default schema

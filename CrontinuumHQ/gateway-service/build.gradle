@@ -17,21 +17,54 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	// Multi-tenancy (shared lib)
-	implementation project(':shared-libs')
+configurations.all {
+	resolutionStrategy {
+		// Fail immediately on any version conflict
+		failOnVersionConflict()
 
-	// Spring Cloud Gateway (for gateway-service only)
-	implementation 'org.springframework.cloud:spring-cloud-starter-gateway:4.3.0'
-
-	// Test dependencies (MUST be in each service module)
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
-	testImplementation 'org.assertj:assertj-core:3.24.2'
-
+		// Force EVERY JUnit component to 5.9.3
+		eachDependency { DependencyResolveDetails details ->
+			if (details.requested.group.startsWith('org.junit')) {
+				details.useVersion '5.9.3'
+			}
+			if (details.requested.group == 'org.junit.platform') {
+				details.useVersion '1.9.3'
+			}
+		}
+	}
 }
 
-tasks.named('test') {
+dependencies {
+	implementation project(':shared-libs')
+	implementation 'org.springframework.cloud:spring-cloud-starter-gateway:4.3.0'
+
+	// jakarta servlet
+	implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+	// Test dependencies (completely isolated)
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage'
+		exclude group: 'org.junit.platform'
+		exclude group: 'org.junit.jupiter'
+	}
+
+	// Manually add JUnit 5.9.3
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.3'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+
+	// Platform components
+	testImplementation 'org.junit.platform:junit-platform-commons:1.9.3'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.9.3'
+
+	// Other test libs
+	testImplementation 'org.assertj:assertj-core:3.24.2'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.17.0'
+	testImplementation 'com.h2database:h2:2.2.220'
+	testImplementation 'org.springframework.boot:spring-boot-starter-jdbc'
+}
+
+test {
 	useJUnitPlatform()
+	systemProperty 'java.awt.headless', 'true'
 }

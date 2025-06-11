@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: scheduler
+          volumeMounts:
+            - name: tenant-config
+              mountPath: /app/config/tenant
+          env:
+            - name: TENANT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tenant']
+      volumes:
+        - name: tenant-config
+          configMap:
+            name: tenant-config-$(TENANT_ID)
+  selector:
+    matchLabels:
+      app: scheduler
+      tenant: $(TENANT_ID)

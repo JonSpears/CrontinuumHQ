@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:scheduler}
+    username: ${DB_USER:admin}
+    password: ${DB_PASSWORD:!ChangeMe!}
+    hikari:
+      schema: public
+      connection-init-sql: "RESET ROLE" # Prevents privilege escalation
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+        show_sql: true
+
+# Tenant-specific overrides (example for test environment)
+---
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:tc:postgresql:15-alpine:///scheduler_test?TC_TMPFS=/testtmpfs:rw
+    username: testuser
+    password: testpass
